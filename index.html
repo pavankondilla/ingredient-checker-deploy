@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ingredient Safety Checker - Free Tool</title>
-<meta name="description" content="Check your soap, shampoo, and food products for hidden harmful chemicals in seconds. Free, no signup, works instantly.">
+<meta name="description" content="Check your soap, shampoo, and food products for hidden harmful chemicals in seconds. Scan a photo of the label or paste the text. Free, no signup.">
 <meta property="og:title" content="Ingredient Safety Checker - Free Tool">
-<meta property="og:description" content="Check your soap, shampoo, and food for hidden harmful chemicals in seconds">
+<meta property="og:description" content="Scan or paste an ingredient label and check it for hidden harmful chemicals in seconds">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ingredient Safety Checker - Free Tool">
-<meta name="twitter:description" content="Check your soap, shampoo, and food for hidden harmful chemicals in seconds">
+<meta name="twitter:description" content="Scan or paste an ingredient label and check it for hidden harmful chemicals in seconds">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
 <style>
 :root {
@@ -34,7 +34,10 @@
   --bg-success: #EAF3DE;
   --text-success: #3B6D11;
   --border-success: #97C459;
-  --radius: 8px;
+  --accent: #2F6FE4;
+  --accent-hover: #2558BC;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.06);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -46,6 +49,7 @@
     --text-muted: #888780;
     --border: rgba(255,255,255,0.12);
     --border-strong: rgba(255,255,255,0.22);
+    --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.3);
   }
 }
 :root[data-theme="dark"] {
@@ -57,25 +61,57 @@
   --text-muted: #888780;
   --border: rgba(255,255,255,0.12);
   --border-strong: rgba(255,255,255,0.22);
+  --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.3);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface-0); color: var(--text-primary); }
-.wrap { max-width: 720px; margin: 0 auto; padding: 1.5rem; }
-h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-.sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; }
-.tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-.tab { padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; }
-.tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface-0); color: var(--text-primary); min-height: 100vh; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 1.75rem 1.25rem 3rem; }
+.hero { display:flex; align-items:center; gap: 12px; margin-bottom: 4px; }
+.hero .icon { font-size: 30px; line-height:1; }
+h1 { font-size: 23px; font-weight: 700; letter-spacing: -0.01em; }
+.sub { font-size: 14px; color: var(--text-secondary); margin: 6px 0 1.5rem; line-height:1.5; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; background: var(--surface-1); padding: 5px; border-radius: 12px; border: 1px solid var(--border); }
+.tab { flex:1; text-align:center; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-secondary); border-radius: 8px; transition: background .15s, color .15s; user-select:none; }
+.tab.active { color: var(--text-primary); background: var(--surface-2); box-shadow: var(--shadow); }
 .panel { display: none; }
-.panel.active { display: block; }
+.panel.active { display: block; animation: fadein .2s ease; }
+@keyframes fadein { from{ opacity:0; transform: translateY(2px);} to{opacity:1; transform:translateY(0);} }
+
+.card-block { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); margin-bottom: 1.25rem; }
+.section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 10px; }
+
+.scan-row { display:flex; gap:10px; flex-wrap: wrap; margin-bottom: 14px; }
+.scan-btn { flex:1; min-width: 150px; display:flex; align-items:center; justify-content:center; gap:8px; padding: 14px 12px; border: 1.5px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface-1); color: var(--text-primary); font-size: 14px; font-weight: 600; cursor: pointer; text-align:center; transition: border-color .15s, background .15s; }
+.scan-btn:hover { border-color: var(--accent); background: var(--bg-accent); }
+.scan-btn .em { font-size: 18px; }
+.scan-btn input[type=file] { display:none; }
+
+.or-divider { display:flex; align-items:center; gap:10px; margin: 4px 0 14px; color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+
 textarea { width: 100%; min-height: 110px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 14px; color: var(--text-primary); background: var(--surface-2); resize: vertical; }
 textarea::placeholder { color: var(--text-muted); }
-textarea:focus { outline: none; border-color: var(--border-strong); }
+textarea:focus { outline: none; border-color: var(--accent); }
 .row { display:flex; gap:10px; margin-top:12px; flex-wrap: wrap; }
 button { padding: 10px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); font-size: 14px; font-weight: 500; cursor: pointer; }
 button:hover { background: var(--surface-1); }
-button.primary { background: var(--text-primary); color: var(--surface-2); border-color: var(--text-primary); }
-.err { color: var(--text-danger); font-size: 13px; margin-top: 8px; display:none; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.primary:hover { background: var(--accent-hover); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.err { color: var(--text-danger); font-size: 13px; margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: var(--bg-danger); display:none; }
+
+.scan-status { display:none; margin-bottom: 14px; padding: 12px 14px; border-radius: var(--radius); background: var(--bg-accent); color: var(--text-accent); font-size: 13px; }
+.scan-status.is-error { background: var(--bg-danger); color: var(--text-danger); }
+.scan-status.is-success { background: var(--bg-success); color: var(--text-success); }
+.scan-status .top-line { display:flex; align-items:center; justify-content:space-between; gap:8px; font-weight:600; margin-bottom: 6px; }
+.progress-track { height:6px; border-radius:4px; background: rgba(0,0,0,0.08); overflow:hidden; }
+.progress-fill { height:100%; background: var(--accent); width:0%; transition: width .2s ease; border-radius:4px; }
+.spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(0,0,0,0.15); border-top-color: var(--accent); border-radius:50%; animation: spin .7s linear infinite; vertical-align:middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.preview-thumb { max-width: 90px; max-height: 90px; border-radius: 6px; border:1px solid var(--border); margin-top:8px; display:block; }
+
 .results { margin-top: 1.5rem; }
 .badge { display:inline-block; padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; margin-bottom: 1rem; }
 .b-critical { background: var(--bg-danger); color: var(--text-danger); }
@@ -97,43 +133,97 @@ button.primary { background: var(--text-primary); color: var(--surface-2); borde
 .rec li { padding: 4px 0; }
 .example { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
 .safe-msg { background: var(--bg-success); color: var(--text-success); padding: 14px 16px; border-radius: 10px; font-size: 14px; }
+.footnote { font-size: 12px; color: var(--text-muted); margin-top: 2rem; text-align:center; line-height:1.6; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; z-index: 100; padding: 16px; }
+.modal-overlay.open { display:flex; }
+.modal { background: var(--surface-2); border-radius: 14px; padding: 16px; max-width: 480px; width:100%; box-shadow: var(--shadow); }
+.modal video { width:100%; border-radius: 10px; background:#000; max-height: 60vh; }
+.modal-actions { display:flex; gap:10px; margin-top: 14px; }
+.modal-actions button { flex:1; }
+.modal-title { font-size:14px; font-weight:700; margin-bottom: 10px; }
+
+@media (max-width: 480px) {
+  .wrap { padding: 1.25rem 1rem 2.5rem; }
+  h1 { font-size: 20px; }
+  .scan-btn { min-width: 0; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Ingredient safety checker</h1>
-  <p class="sub">Check cosmetics or food labels for flagged chemicals and additives.</p>
+  <div class="hero"><span class="icon">🛡️</span><h1>Ingredient safety checker</h1></div>
+  <p class="sub">Scan a photo of a cosmetics or food label — or paste the text — and instantly check it against a curated list of flagged chemicals and additives.</p>
 
   <div class="tabs">
-    <div class="tab active" data-tab="cosmetics" onclick="switchTab('cosmetics')">Cosmetics</div>
-    <div class="tab" data-tab="food" onclick="switchTab('food')">Food</div>
+    <div class="tab active" data-tab="cosmetics" onclick="switchTab('cosmetics')">🧴 Cosmetics</div>
+    <div class="tab" data-tab="food" onclick="switchTab('food')">🍽️ Food</div>
   </div>
 
   <div id="panel-cosmetics" class="panel active">
-    <textarea id="input-cosmetics" placeholder="Water, Sodium Laureth Sulfate, Methylparaben, Fragrance, Triclosan..."></textarea>
-    <div class="example">Paste the ingredient list from the product packaging.</div>
-    <div class="row">
-      <button class="primary" onclick="analyze('cosmetics')">Analyze</button>
-      <button onclick="loadExample('cosmetics')">Load example</button>
-      <button onclick="clearAll('cosmetics')">Clear</button>
+    <div class="card-block">
+      <div class="section-title">Scan the label</div>
+      <div class="scan-row">
+        <div class="scan-btn" onclick="openCamera('cosmetics')"><span class="em">📷</span> Use camera</div>
+        <label class="scan-btn"><span class="em">🖼️</span> Upload photo
+          <input type="file" accept="image/*" capture="environment" onchange="handleFileUpload(event,'cosmetics')">
+        </label>
+      </div>
+      <div class="scan-status" id="scan-status-cosmetics"></div>
+
+      <div class="or-divider">or type / paste</div>
+      <textarea id="input-cosmetics" placeholder="Water, Sodium Laureth Sulfate, Methylparaben, Fragrance, Triclosan..."></textarea>
+      <div class="example">Paste, type, or scan the ingredient list from the product packaging, then review it before analyzing.</div>
+      <div class="row">
+        <button class="primary" onclick="analyze('cosmetics')">Analyze</button>
+        <button onclick="loadExample('cosmetics')">Load example</button>
+        <button onclick="clearAll('cosmetics')">Clear</button>
+      </div>
+      <div class="err" id="err-cosmetics"></div>
     </div>
-    <div class="err" id="err-cosmetics"></div>
     <div class="results" id="results-cosmetics"></div>
   </div>
 
   <div id="panel-food" class="panel">
-    <textarea id="input-food" placeholder="Oats, Maltodextrin, Salt, Flavour Enhancer (627, 631), Antioxidant (320)..."></textarea>
-    <div class="example">Paste ingredients, including INS/E-numbers in brackets, e.g. "Antioxidant (320)".</div>
-    <div class="row">
-      <button class="primary" onclick="analyze('food')">Analyze</button>
-      <button onclick="loadExample('food')">Load example</button>
-      <button onclick="clearAll('food')">Clear</button>
+    <div class="card-block">
+      <div class="section-title">Scan the label</div>
+      <div class="scan-row">
+        <div class="scan-btn" onclick="openCamera('food')"><span class="em">📷</span> Use camera</div>
+        <label class="scan-btn"><span class="em">🖼️</span> Upload photo
+          <input type="file" accept="image/*" capture="environment" onchange="handleFileUpload(event,'food')">
+        </label>
+      </div>
+      <div class="scan-status" id="scan-status-food"></div>
+
+      <div class="or-divider">or type / paste</div>
+      <textarea id="input-food" placeholder="Oats, Maltodextrin, Salt, Flavour Enhancer (627, 631), Antioxidant (320)..."></textarea>
+      <div class="example">Paste, type, or scan ingredients, including INS/E-numbers in brackets, e.g. "Antioxidant (320)".</div>
+      <div class="row">
+        <button class="primary" onclick="analyze('food')">Analyze</button>
+        <button onclick="loadExample('food')">Load example</button>
+        <button onclick="clearAll('food')">Clear</button>
+      </div>
+      <div class="err" id="err-food"></div>
     </div>
-    <div class="err" id="err-food"></div>
     <div class="results" id="results-food"></div>
+  </div>
+
+  <div class="footnote">Runs entirely in your browser. Photos are processed on-device and never uploaded anywhere.</div>
+</div>
+
+<div class="modal-overlay" id="cameraModal">
+  <div class="modal">
+    <div class="modal-title">Position the label inside the frame, then capture</div>
+    <video id="camVideo" autoplay playsinline muted></video>
+    <canvas id="camCanvas" style="display:none"></canvas>
+    <div class="modal-actions">
+      <button class="primary" onclick="capturePhoto()">Capture</button>
+      <button onclick="closeCamera()">Cancel</button>
+    </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script>
 const cosmeticsDB = {
   'phthalate': {risk:'critical',cat:'Endocrine disruptor',effects:['Reduces testosterone','Reproductive toxicity'],details:'Often hidden under "fragrance". DEP and DBP are most common.'},
@@ -217,6 +307,7 @@ function clearAll(type){
   document.getElementById('input-'+type).value = '';
   document.getElementById('results-'+type).innerHTML = '';
   document.getElementById('err-'+type).style.display = 'none';
+  hideScanStatus(type);
 }
 
 function switchTab(tab){
@@ -236,7 +327,7 @@ function analyze(type){
   resEl.innerHTML = '';
 
   try {
-    if(!input){ throw new Error('Enter an ingredient list first.'); }
+    if(!input){ throw new Error('Enter, paste, or scan an ingredient list first.'); }
     if(input.length > 5000){ throw new Error('That text is too long. Paste just the ingredients list.'); }
 
     const db = type === 'cosmetics' ? cosmeticsDB : foodDB;
@@ -294,6 +385,167 @@ function analyze(type){
     errEl.style.display = 'block';
   }
 }
+
+/* ---------- Camera + photo OCR scanning ---------- */
+
+let mediaStream = null;
+let cameraTargetType = null;
+
+function getScanStatusEl(type){ return document.getElementById('scan-status-'+type); }
+
+function showScanStatus(type, html, cls){
+  const el = getScanStatusEl(type);
+  el.className = 'scan-status' + (cls ? ' ' + cls : '');
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+function hideScanStatus(type){
+  const el = getScanStatusEl(type);
+  el.style.display = 'none';
+  el.innerHTML = '';
+}
+
+function setScanProgress(type, label, pct){
+  showScanStatus(type,
+    '<div class="top-line"><span><span class="spinner"></span> ' + label + '</span><span>' + pct + '%</span></div>' +
+    '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>'
+  );
+}
+
+async function openCamera(type){
+  cameraTargetType = type;
+  const modal = document.getElementById('cameraModal');
+  const video = document.getElementById('camVideo');
+  hideScanStatus(type);
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showScanStatus(type, 'Camera access is not supported in this browser. Use "Upload photo" instead.', 'is-error');
+    return;
+  }
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
+    });
+    video.srcObject = mediaStream;
+    modal.classList.add('open');
+  } catch(e){
+    showScanStatus(type, 'Could not access the camera (' + e.message + '). Use "Upload photo" instead, or check camera permissions for this site.', 'is-error');
+  }
+}
+
+function closeCamera(){
+  const modal = document.getElementById('cameraModal');
+  modal.classList.remove('open');
+  if(mediaStream){
+    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream = null;
+  }
+}
+
+function capturePhoto(){
+  const video = document.getElementById('camVideo');
+  const canvas = document.getElementById('camCanvas');
+  const type = cameraTargetType;
+
+  if(!video.videoWidth){
+    showScanStatus(type, 'Camera is still starting up — wait a second and try again.', 'is-error');
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+  closeCamera();
+  runOCR(dataUrl, type);
+}
+
+function handleFileUpload(event, type){
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if(!file) return;
+
+  if(!file.type.startsWith('image/')){
+    showScanStatus(type, 'Please choose an image file (JPG, PNG, etc).', 'is-error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onerror = function(){
+    showScanStatus(type, 'Could not read that file. Please try a different photo.', 'is-error');
+  };
+  reader.onload = function(){
+    resizeImage(reader.result, 1600).then(dataUrl => runOCR(dataUrl, type));
+  };
+  reader.readAsDataURL(file);
+}
+
+function resizeImage(dataUrl, maxDim){
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = function(){
+      let { width, height } = img;
+      if(width <= maxDim && height <= maxDim){
+        resolve(dataUrl);
+        return;
+      }
+      const scale = Math.min(maxDim / width, maxDim / height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.9));
+    };
+    img.onerror = function(){ resolve(dataUrl); };
+    img.src = dataUrl;
+  });
+}
+
+async function runOCR(imageSrc, type){
+  if(typeof Tesseract === 'undefined'){
+    showScanStatus(type, 'The text-scanning library failed to load. Check your internet connection and reload the page, or type the ingredients manually.', 'is-error');
+    return;
+  }
+
+  setScanProgress(type, 'Reading text from photo…', 0);
+
+  try {
+    const result = await Tesseract.recognize(imageSrc, 'eng', {
+      logger: (m) => {
+        if(m.status === 'recognizing text' && typeof m.progress === 'number'){
+          setScanProgress(type, 'Reading text from photo…', Math.round(m.progress * 100));
+        } else if(m.status){
+          setScanProgress(type, m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…', 0);
+        }
+      }
+    });
+
+    let text = (result && result.data && result.data.text) ? result.data.text.trim() : '';
+    text = text.replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
+
+    if(!text){
+      showScanStatus(type, 'No readable text was found in that photo. Try better lighting, a closer shot, or a straighter angle, then scan again.', 'is-error');
+      return;
+    }
+
+    const textarea = document.getElementById('input-' + type);
+    textarea.value = text;
+    showScanStatus(type, '✓ Text extracted — review it below (fix any misread words), then click Analyze.', 'is-success');
+    textarea.focus();
+  } catch(e){
+    showScanStatus(type, 'Something went wrong while reading the photo (' + e.message + '). Please try again or type the ingredients manually.', 'is-error');
+  }
+}
+
+document.getElementById('cameraModal').addEventListener('click', function(e){
+  if(e.target === this) closeCamera();
+});
 </script>
 </body>
 </html>
