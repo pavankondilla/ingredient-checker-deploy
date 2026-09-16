@@ -1,0 +1,9 @@
+{
+  "name": "ingredient-safety-checker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free tool to check cosmetics and food products for flagged chemicals and additives",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

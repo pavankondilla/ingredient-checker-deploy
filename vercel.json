@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "name": "ingredient-safety-checker",
+  "public": true,
+  "cleanUrls": true
+}

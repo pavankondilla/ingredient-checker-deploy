@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingredient Safety Checker - Free Tool</title>
+<meta name="description" content="Check your soap, shampoo, and food products for hidden harmful chemicals in seconds. Free, no signup, works instantly.">
+<meta property="og:title" content="Ingredient Safety Checker - Free Tool">
+<meta property="og:description" content="Check your soap, shampoo, and food for hidden harmful chemicals in seconds">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ingredient Safety Checker - Free Tool">
+<meta name="twitter:description" content="Check your soap, shampoo, and food for hidden harmful chemicals in seconds">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+<style>
+:root {
+  --surface-2: #ffffff;
+  --surface-1: #f7f6f3;
+  --surface-0: #f1efe8;
+  --text-primary: #1a1a18;
+  --text-secondary: #5f5e5a;
+  --text-muted: #888780;
+  --border: rgba(0,0,0,0.1);
+  --border-strong: rgba(0,0,0,0.2);
+  --bg-danger: #FCEBEB;
+  --text-danger: #791F1F;
+  --border-danger: #E24B4A;
+  --bg-warning: #FAEEDA;
+  --text-warning: #854F0B;
+  --border-warning: #EF9F27;
+  --bg-accent: #E6F1FB;
+  --text-accent: #185FA5;
+  --border-accent: #378ADD;
+  --bg-success: #EAF3DE;
+  --text-success: #3B6D11;
+  --border-success: #97C459;
+  --radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-2: #232320;
+    --surface-1: #1c1c19;
+    --surface-0: #151513;
+    --text-primary: #f1efe8;
+    --text-secondary: #b4b2a9;
+    --text-muted: #888780;
+    --border: rgba(255,255,255,0.12);
+    --border-strong: rgba(255,255,255,0.22);
+  }
+}
+:root[data-theme="dark"] {
+  --surface-2: #232320;
+  --surface-1: #1c1c19;
+  --surface-0: #151513;
+  --text-primary: #f1efe8;
+  --text-secondary: #b4b2a9;
+  --text-muted: #888780;
+  --border: rgba(255,255,255,0.12);
+  --border-strong: rgba(255,255,255,0.22);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface-0); color: var(--text-primary); }
+.wrap { max-width: 720px; margin: 0 auto; padding: 1.5rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+.tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; }
+.tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+.panel { display: none; }
+.panel.active { display: block; }
+textarea { width: 100%; min-height: 110px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 14px; color: var(--text-primary); background: var(--surface-2); resize: vertical; }
+textarea::placeholder { color: var(--text-muted); }
+textarea:focus { outline: none; border-color: var(--border-strong); }
+.row { display:flex; gap:10px; margin-top:12px; flex-wrap: wrap; }
+button { padding: 10px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); font-size: 14px; font-weight: 500; cursor: pointer; }
+button:hover { background: var(--surface-1); }
+button.primary { background: var(--text-primary); color: var(--surface-2); border-color: var(--text-primary); }
+.err { color: var(--text-danger); font-size: 13px; margin-top: 8px; display:none; }
+.results { margin-top: 1.5rem; }
+.badge { display:inline-block; padding: 6px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; margin-bottom: 1rem; }
+.b-critical { background: var(--bg-danger); color: var(--text-danger); }
+.b-high { background: var(--bg-warning); color: var(--text-warning); }
+.b-moderate { background: var(--bg-accent); color: var(--text-accent); }
+.b-low { background: var(--bg-success); color: var(--text-success); }
+.card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+.card.critical { border-left: 3px solid var(--border-danger); }
+.card.high { border-left: 3px solid var(--border-warning); }
+.card.moderate { border-left: 3px solid var(--border-accent); }
+.name { font-size: 15px; font-weight: 600; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.tag { font-size: 11px; padding: 3px 9px; border-radius: 5px; font-weight: 600; white-space:nowrap; }
+.cat { font-size: 12px; color: var(--text-muted); margin: 4px 0 8px; }
+.effect { font-size: 13px; color: var(--text-secondary); padding: 6px 0; }
+.details { font-size: 12px; color: var(--text-muted); background: var(--surface-1); padding: 8px 10px; border-radius: 6px; margin-top: 8px; line-height: 1.5; }
+.rec { background: var(--surface-1); padding: 14px 16px; border-radius: 10px; margin-top: 1rem; border-left: 3px solid var(--text-primary); }
+.rec h4 { font-size: 14px; margin-bottom: 8px; }
+.rec ul { list-style:none; font-size: 13px; color: var(--text-secondary); }
+.rec li { padding: 4px 0; }
+.example { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+.safe-msg { background: var(--bg-success); color: var(--text-success); padding: 14px 16px; border-radius: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ingredient safety checker</h1>
+  <p class="sub">Check cosmetics or food labels for flagged chemicals and additives.</p>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="cosmetics" onclick="switchTab('cosmetics')">Cosmetics</div>
+    <div class="tab" data-tab="food" onclick="switchTab('food')">Food</div>
+  </div>
+
+  <div id="panel-cosmetics" class="panel active">
+    <textarea id="input-cosmetics" placeholder="Water, Sodium Laureth Sulfate, Methylparaben, Fragrance, Triclosan..."></textarea>
+    <div class="example">Paste the ingredient list from the product packaging.</div>
+    <div class="row">
+      <button class="primary" onclick="analyze('cosmetics')">Analyze</button>
+      <button onclick="loadExample('cosmetics')">Load example</button>
+      <button onclick="clearAll('cosmetics')">Clear</button>
+    </div>
+    <div class="err" id="err-cosmetics"></div>
+    <div class="results" id="results-cosmetics"></div>
+  </div>
+
+  <div id="panel-food" class="panel">
+    <textarea id="input-food" placeholder="Oats, Maltodextrin, Salt, Flavour Enhancer (627, 631), Antioxidant (320)..."></textarea>
+    <div class="example">Paste ingredients, including INS/E-numbers in brackets, e.g. "Antioxidant (320)".</div>
+    <div class="row">
+      <button class="primary" onclick="analyze('food')">Analyze</button>
+      <button onclick="loadExample('food')">Load example</button>
+      <button onclick="clearAll('food')">Clear</button>
+    </div>
+    <div class="err" id="err-food"></div>
+    <div class="results" id="results-food"></div>
+  </div>
+</div>
+
+<script>
+const cosmeticsDB = {
+  'phthalate': {risk:'critical',cat:'Endocrine disruptor',effects:['Reduces testosterone','Reproductive toxicity'],details:'Often hidden under "fragrance". DEP and DBP are most common.'},
+  'diethyl phthalate': {risk:'critical',cat:'Endocrine disruptor',effects:['Testosterone reduction','Male fertility issues'],details:'Common in scented products.'},
+  'dibutyl phthalate': {risk:'critical',cat:'Endocrine disruptor',effects:['Blocks androgen receptors','Reproductive damage'],details:'Actively anti-androgenic.'},
+  'dehp': {risk:'critical',cat:'Endocrine disruptor',effects:['Testosterone disruption','Testicular damage'],details:'Banned in toys, still found in some cosmetics.'},
+  'fragrance': {risk:'high',cat:'Undisclosed mixture',effects:['May contain hidden phthalates','Common allergy trigger'],details:'Legal umbrella term that can hide 100+ unlisted chemicals.'},
+  'parfum': {risk:'high',cat:'Undisclosed mixture',effects:['May contain hidden phthalates','Common allergy trigger'],details:'European term for fragrance, same risk profile.'},
+  'methylparaben': {risk:'high',cat:'Estrogenic preservative',effects:['Mimics estrogen','Hormone imbalance'],details:'Most common paraben, detected in human tissue.'},
+  'propylparaben': {risk:'high',cat:'Estrogenic preservative',effects:['Estrogen mimicry','Reproductive toxicity'],details:'Weakly estrogenic, accumulates over time.'},
+  'butylparaben': {risk:'critical',cat:'Estrogenic preservative',effects:['Strong estrogen mimic','Testosterone reduction'],details:'Strongest estrogenic activity among parabens.'},
+  'ethylparaben': {risk:'high',cat:'Estrogenic preservative',effects:['Hormone disruption'],details:'Detectable in human blood after use.'},
+  'triclosan': {risk:'critical',cat:'Antimicrobial',effects:['Reduces testosterone','Thyroid disruption'],details:'Banned in antibacterial soap in 2016, still appears elsewhere.'},
+  'triclocarban': {risk:'high',cat:'Antimicrobial',effects:['Endocrine disruption'],details:'Similar to triclosan, bioaccumulative.'},
+  'benzophenone': {risk:'high',cat:'UV filter',effects:['Estrogenic activity','Hormone disruption'],details:'Common sunscreen ingredient, absorbs into skin.'},
+  'homosalate': {risk:'moderate',cat:'UV filter',effects:['Endocrine disruption'],details:'Documented hormone-disrupting potential.'},
+  'galaxolide': {risk:'high',cat:'Synthetic musk',effects:['Bioaccumulates in fat','Hormone interference'],details:'Persistent fragrance chemical.'},
+  'tonalide': {risk:'high',cat:'Synthetic musk',effects:['Persistent in body'],details:'Builds up in tissue over time.'},
+  'bpa': {risk:'high',cat:'Bisphenol',effects:['Strong estrogen mimic','Testosterone reduction'],details:'Detected in over 90% of tested populations.'},
+  'bisphenol a': {risk:'high',cat:'Bisphenol',effects:['Hormone disruption'],details:'Even small doses affect hormones.'},
+  'sodium lauryl sulfate': {risk:'moderate',cat:'Surfactant',effects:['Skin barrier damage','Irritation'],details:'Damages barrier, allows deeper penetration of other chemicals.'},
+  'sls': {risk:'moderate',cat:'Surfactant',effects:['Barrier disruption'],details:'Common detergent that compromises skin.'},
+  'sodium laureth sulfate': {risk:'moderate',cat:'Surfactant',effects:['Barrier disruption'],details:'Milder than SLS, still disrupts barrier.'},
+  'formaldehyde': {risk:'critical',cat:'Preservative',effects:['Carcinogenic','Respiratory irritation'],details:'Classified as carcinogen by WHO and EPA.'},
+  'dmdm hydantoin': {risk:'high',cat:'Preservative',effects:['Releases formaldehyde slowly'],details:'Formaldehyde-releasing preservative.'},
+  'lead': {risk:'critical',cat:'Heavy metal',effects:['Neurotoxicity','Reproductive toxicity'],details:'No safe level, bioaccumulative.'},
+  'mercury': {risk:'critical',cat:'Heavy metal',effects:['Neurotoxicity','Kidney damage'],details:'Sometimes found in unregulated skin creams.'},
+  'sandalwood': {risk:'moderate',cat:'Fragrance botanical',effects:['Contact sensitizer in some users'],details:'Natural but still a known allergen for a minority of people.'},
+  'cocamidopropyl betaine': {risk:'moderate',cat:'Surfactant',effects:['Contact dermatitis in sensitized users'],details:'One of the most common cleansing agents; rash requires direct contact.'},
+  'coco betaine': {risk:'moderate',cat:'Surfactant',effects:['Contact dermatitis in sensitized users'],details:'Coconut-derived cleanser, mild but a known irritant for some.'},
+  'propylene glycol': {risk:'low',cat:'Humectant/vehicle',effects:['Rare contact irritation'],details:'Considered safe when non-irritating; occasional allergen.'}
+};
+
+const foodDB = {
+  '620': {risk:'moderate',cat:'Flavour enhancer (glutamic acid/MSG family)',effects:['Headache/flushing in sensitive individuals'],details:'Generally recognized as safe; a minority report MSG-sensitivity symptoms.'},
+  '621': {risk:'moderate',cat:'Flavour enhancer (MSG)',effects:['Headache, flushing in sensitive individuals'],details:'Monosodium glutamate. Widely used, ADI not specified, but avoid in infant food.'},
+  'msg': {risk:'moderate',cat:'Flavour enhancer',effects:['Headache/flushing in sensitive individuals'],details:'Not permitted for infants under 12 months per Indian food rules.'},
+  '627': {risk:'moderate',cat:'Flavour enhancer (disodium guanylate)',effects:['Possible skin rash in sensitive individuals'],details:'Not for infants under 12 weeks. Avoid if asthmatic or gout-prone.'},
+  '631': {risk:'moderate',cat:'Flavour enhancer (disodium inosinate)',effects:['Possible skin rash in sensitive individuals'],details:'Often paired with 627 for umami taste. Same infant restriction applies.'},
+  '635': {risk:'moderate',cat:'Flavour enhancer (ribonucleotides)',effects:['Similar profile to MSG'],details:'Combination of 627 and 631.'},
+  '320': {risk:'high',cat:'Antioxidant (BHA)',effects:['IARC Group 2B: possibly carcinogenic','Under active FDA safety reassessment (2026)'],details:'Approved at controlled doses, but flagged for children\'s products specifically by regulators.'},
+  'bha': {risk:'high',cat:'Antioxidant',effects:['Possibly carcinogenic (animal studies)'],details:'FDA opened a new safety review of BHA in 2026 due to child exposure concerns.'},
+  '321': {risk:'moderate',cat:'Antioxidant (BHT)',effects:['Debated long-term safety'],details:'Similar chemical family to BHA, less controversial but still monitored.'},
+  '211': {risk:'moderate',cat:'Preservative (sodium benzoate)',effects:['Can form benzene with vitamin C under heat/light'],details:'Generally safe alone; combination effects are the main concern.'},
+  '102': {risk:'high',cat:'Artificial colour (Tartrazine)',effects:['Linked to hyperactivity in children in some studies'],details:'Requires a warning label in the EU for effects on children\'s activity/attention.'},
+  '110': {risk:'high',cat:'Artificial colour (Sunset Yellow)',effects:['Linked to hyperactivity in children'],details:'Part of the EU "Southampton Six" colours requiring a warning label.'},
+  '122': {risk:'moderate',cat:'Artificial colour (Carmoisine)',effects:['Possible hyperactivity link'],details:'Restricted in some countries for children\'s food.'},
+  '551': {risk:'low',cat:'Anticaking agent (silicon dioxide)',effects:['Minimal known risk'],details:'Common, low-concern texture agent.'},
+  '414': {risk:'low',cat:'Stabilizer (gum arabic)',effects:['Minimal known risk'],details:'Natural plant gum, generally well tolerated.'},
+  '330': {risk:'low',cat:'Acidity regulator (citric acid)',effects:['Minimal known risk'],details:'Naturally occurring in citrus fruit.'},
+  '296': {risk:'low',cat:'Acidity regulator (malic acid)',effects:['Minimal known risk'],details:'Naturally occurring in apples.'},
+  'maltodextrin': {risk:'moderate',cat:'Filler/thickener',effects:['High glycemic index','Can spike blood sugar'],details:'Not harmful in small amounts but adds no nutrition and raises blood sugar fast.'},
+  'aspartame': {risk:'moderate',cat:'Artificial sweetener',effects:['Debated long-term safety, headaches in sensitive people'],details:'IARC classified it as possibly carcinogenic in 2023 at very high intake; regulators maintain current limits are safe.'},
+  '951': {risk:'moderate',cat:'Artificial sweetener (aspartame)',effects:['Debated long-term safety'],details:'Same as aspartame above.'},
+  'trans fat': {risk:'critical',cat:'Fat',effects:['Raises bad cholesterol','Heart disease risk'],details:'WHO recommends eliminating industrially produced trans fats entirely.'},
+  'hydrogenated vegetable oil': {risk:'high',cat:'Fat',effects:['May contain trans fats'],details:'Check for "partially hydrogenated" specifically, which is worse.'},
+  'high fructose corn syrup': {risk:'moderate',cat:'Sweetener',effects:['Linked to obesity, fatty liver with excess intake'],details:'Not acutely dangerous but easy to overconsume.'}
+};
+
+function normalize(s){ return s.toLowerCase().trim(); }
+
+function extractCodes(text){
+  const codes = [];
+  const regex = /\((?:ins\s*)?([\d,\s]+)\)/gi;
+  let m;
+  while((m = regex.exec(text)) !== null){
+    m[1].split(',').forEach(c => { const t=c.trim(); if(t) codes.push(t); });
+  }
+  return codes;
+}
+
+function loadExample(type){
+  if(type === 'cosmetics'){
+    document.getElementById('input-cosmetics').value = 'Water, Sodium Laureth Sulfate, Cocamidopropyl Betaine, Methylparaben, Diethyl Phthalate, Fragrance, Triclosan, Citric Acid';
+  } else {
+    document.getElementById('input-food').value = 'Oats (73.9%), Maltodextrin, Salt, Spices and Condiments, Sugar, Flavour Enhancer (627, 631), Antioxidant (320)';
+  }
+}
+
+function clearAll(type){
+  document.getElementById('input-'+type).value = '';
+  document.getElementById('results-'+type).innerHTML = '';
+  document.getElementById('err-'+type).style.display = 'none';
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+function riskRank(r){ return r==='critical'?4:r==='high'?3:r==='moderate'?2:1; }
+
+function analyze(type){
+  const input = document.getElementById('input-'+type).value.trim();
+  const errEl = document.getElementById('err-'+type);
+  const resEl = document.getElementById('results-'+type);
+  errEl.style.display = 'none';
+  resEl.innerHTML = '';
+
+  try {
+    if(!input){ throw new Error('Enter an ingredient list first.'); }
+    if(input.length > 5000){ throw new Error('That text is too long. Paste just the ingredients list.'); }
+
+    const db = type === 'cosmetics' ? cosmeticsDB : foodDB;
+    const found = {};
+
+    if(type === 'food'){
+      const codes = extractCodes(input);
+      codes.forEach(code => { if(db[code]) found[code] = db[code]; });
+    }
+
+    const parts = input.toLowerCase().split(/[,;/\n]/).map(s => s.trim()).filter(s => s.length > 1);
+    parts.forEach(part => {
+      Object.keys(db).forEach(key => {
+        if(/^\d+$/.test(key)) return;
+        if(part.includes(key)) found[key] = db[key];
+      });
+    });
+
+    const keys = Object.keys(found);
+    if(keys.length === 0){
+      resEl.innerHTML = '<div class="safe-msg">No flagged ingredients detected in this list. Note: this checker only covers a defined set of commonly flagged substances, not every possible ingredient.</div>';
+      return;
+    }
+
+    let overall = 'low';
+    keys.forEach(k => { if(riskRank(found[k].risk) > riskRank(overall)) overall = found[k].risk; });
+
+    let html = '<span class="badge b-'+overall+'">Overall risk: '+overall.toUpperCase()+'</span>';
+    keys.sort((a,b) => riskRank(found[b].risk) - riskRank(found[a].risk));
+    keys.forEach(name => {
+      const d = found[name];
+      html += '<div class="card '+d.risk+'">';
+      html += '<div class="name"><span>'+name.charAt(0).toUpperCase()+name.slice(1)+'</span><span class="tag b-'+d.risk+'">'+d.risk.toUpperCase()+'</span></div>';
+      html += '<div class="cat">'+d.cat+'</div>';
+      d.effects.forEach(e => { html += '<div class="effect">— '+e+'</div>'; });
+      html += '<div class="details">'+d.details+'</div>';
+      html += '</div>';
+    });
+
+    html += '<div class="rec"><h4>What to do</h4><ul>';
+    if(type === 'cosmetics'){
+      html += '<li>Patch-test on your inner arm for 24-48 hours before full use.</li>';
+      html += '<li>If CRITICAL items are present, consider switching products.</li>';
+      html += '<li>Look for "paraben-free" and "fragrance-free" alternatives.</li>';
+    } else {
+      html += '<li>Occasional consumption of MODERATE items is generally fine for most adults.</li>';
+      html += '<li>Limit daily use for children under 6, especially items with BHA (320) or artificial colours.</li>';
+      html += '<li>Prefer products with shorter ingredient lists and fewer additive codes.</li>';
+    }
+    html += '</ul></div>';
+
+    resEl.innerHTML = html;
+  } catch(e){
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>
